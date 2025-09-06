@@ -1,0 +1,6 @@
+@MY.FlexiCore.Manager_HostAddress = http://localhost:5213
+
+GET {{MY.FlexiCore.Manager_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
