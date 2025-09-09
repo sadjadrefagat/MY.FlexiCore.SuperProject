@@ -1,9 +1,10 @@
 ﻿using MY.FlexiCore.Core.Interfaces;
+using MY.FlexiCore.Infrastructure;
 using MY.FlexiCore.Infrastructure.Logging;
 
-namespace MY.FlexiCore.Infrastructure.Services
+namespace MY.FlexiCore.Manager.Infrastructure.Services
 {
-	public class ExecutionContext : IExecutionContext
+	public class MYExecutionContext : IExecutionContext
 	{
 		private readonly MyDbContext _db;
 		private readonly ILogWriter _logWriter;
@@ -11,7 +12,7 @@ namespace MY.FlexiCore.Infrastructure.Services
 		public object CurrentEntity { get; private set; }
 		public string CurrentUser { get; private set; } = "system";
 
-		public ExecutionContext(MyDbContext db, ILogWriter logWriter, object currentEntity)
+		public MYExecutionContext(MyDbContext db, ILogWriter logWriter, object currentEntity)
 		{
 			_db = db;
 			_logWriter = logWriter;
@@ -36,7 +37,7 @@ namespace MY.FlexiCore.Infrastructure.Services
 			var entityName = CurrentEntity.GetType().Name;
 			var entityIdProp = CurrentEntity.GetType().GetProperty("Id");
 			int? entityId = entityIdProp?.GetValue(CurrentEntity) as int?;
-			_logWriter.WriteLogAsync(entityName, entityId, "UnknownHook", message, level).Wait();
+			_logWriter.WriteLogAsync(entityName, entityId, "Hook", message, level).Wait();
 		}
 	}
 }

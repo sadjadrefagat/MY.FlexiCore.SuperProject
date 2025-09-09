@@ -2,36 +2,40 @@
 using MY.FlexiCore.Core.Interfaces;
 using MY.FlexiCore.Manager.Core.Interfaces;
 
-namespace MY.FlexiCore.Core.Hooks
+namespace MY.FlexiCore.Manager.Core.Hooks
 {
 	public class MyEntityHooks : IEntityHooks
 	{
-		public async Task BeforeSaveAsync(IExecutionContext ctx)
+		public Task BeforeSaveAsync(IExecutionContext ctx)
 		{
 			var entity = ctx.CurrentEntity as DynamicEntity;
 			if (entity != null)
 			{
-				ctx.Log("BeforeSave اجرا شد");
+				ctx.Log($"BeforeSave برای {entity.Title}");
 			}
+			return Task.CompletedTask;
 		}
 
-		public async Task AfterSaveAsync(IExecutionContext ctx)
+		public Task AfterSaveAsync(IExecutionContext ctx)
 		{
 			var entity = ctx.CurrentEntity as DynamicEntity;
 			if (entity != null)
 			{
-				ctx.Log("AfterSave اجرا شد");
+				ctx.Log($"AfterSave برای {entity.Title}");
 			}
+			return Task.CompletedTask;
 		}
 
-		public async Task BeforeDeleteAsync(IExecutionContext ctx)
+		public Task BeforeDeleteAsync(IExecutionContext ctx)
 		{
 			ctx.Log("BeforeDelete اجرا شد");
+			return Task.CompletedTask;
 		}
 
-		public async Task AfterDeleteAsync(IExecutionContext ctx)
+		public Task AfterDeleteAsync(IExecutionContext ctx)
 		{
 			ctx.Log("AfterDelete اجرا شد");
+			return Task.CompletedTask;
 		}
 	}
 }

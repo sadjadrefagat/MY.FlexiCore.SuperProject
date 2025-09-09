@@ -1,50 +1,96 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using MY.FlexiCore.Core.Entities;
+using MY.FlexiCore.Infrastructure;
+using MY.FlexiCore.Infrastructure.Logging;
+using MY.FlexiCore.Manager.Core.Hooks;
+using MY.FlexiCore.Manager.Infrastructure.Services;
 
-namespace MY.FlexiCore.Api.Controllers
+namespace MY.FlexiCore.Manager.Api.Controllers
 {
 	[ApiController]
 	[Route("api/[controller]")]
 	public class EntitiesController : ControllerBase
 	{
-		private static List<DynamicEntity> _entities = new();
+		private readonly MyDbContext _db;
+		private readonly ILogWriter _logWriter;
+
+		public EntitiesController(MyDbContext db, ILogWriter logWriter)
+		{
+			_db = db;
+			_logWriter = logWriter;
+		}
 
 		[HttpGet]
-		public ActionResult<IEnumerable<DynamicEntity>> GetAll() => Ok(_entities);
+		public async Task<ActionResult<IEnumerable<DynamicEntity>>> GetAll()
+		{
+			return Ok(await _db.DynamicEntities.Include(e => e.Fields).ToListAsync());
+		}
 
 		[HttpGet("{id}")]
-		public ActionResult<DynamicEntity> GetById(int id)
+		public async Task<ActionResult<DynamicEntity>> GetById(int id)
 		{
-			var entity = _entities.FirstOrDefault(e => e.Id == id);
+			var entity = await _db.DynamicEntities.Include(e => e.Fields)
+												  .FirstOrDefaultAsync(e => e.Id == id);
 			if (entity == null) return NotFound();
 			return Ok(entity);
 		}
 
 		[HttpPost]
-		public ActionResult<DynamicEntity> Create(DynamicEntity entity)
+		public async Task<ActionResult<DynamicEntity>> Create(DynamicEntity entity)
 		{
-			entity.Id = _entities.Count > 0 ? _entities.Max(e => e.Id) + 1 : 1;
-			_entities.Add(entity);
+			var ctx = new MYExecutionContext(_db, _logWriter, entity);
+			var hooks = new MyEntityHooks();
+
+			await hooks.BeforeSaveAsync(ctx);
+
+			_db.DynamicEntities.Add(entity);
+			await _db.SaveChangesAsync();
+
+			await hooks.AfterSaveAsync(ctx);
+
 			return CreatedAtAction(nameof(GetById), new { id = entity.Id }, entity);
 		}
 
 		[HttpPut("{id}")]
-		public ActionResult Update(int id, DynamicEntity updated)
+		public async Task<ActionResult> Update(int id, DynamicEntity updated)
 		{
-			var entity = _entities.FirstOrDefault(e => e.Id == id);
+			var entity = await _db.DynamicEntities.Include(e => e.Fields)
+												  .FirstOrDefaultAsync(e => e.Id == id);
 			if (entity == null) return NotFound();
+
 			entity.Title = updated.Title;
 			entity.Name = updated.Name;
 			entity.Fields = updated.Fields;
+
+			var ctx = new MYExecutionContext(_db, _logWriter, entity);
+			var hooks = new MyEntityHooks();
+
+			await hooks.BeforeSaveAsync(ctx);
+
+			await _db.SaveChangesAsync();
+
+			await hooks.AfterSaveAsync(ctx);
+
 			return NoContent();
 		}
 
 		[HttpDelete("{id}")]
-		public ActionResult Delete(int id)
+		public async Task<ActionResult> Delete(int id)
 		{
-			var entity = _entities.FirstOrDefault(e => e.Id == id);
+			var entity = await _db.DynamicEntities.FirstOrDefaultAsync(e => e.Id == id);
 			if (entity == null) return NotFound();
-			_entities.Remove(entity);
+
+			var ctx = new MYExecutionContext(_db, _logWriter, entity);
+			var hooks = new MyEntityHooks();
+
+			await hooks.BeforeDeleteAsync(ctx);
+
+			_db.DynamicEntities.Remove(entity);
+			await _db.SaveChangesAsync();
+
+			await hooks.AfterDeleteAsync(ctx);
+
 			return NoContent();
 		}
 	}
