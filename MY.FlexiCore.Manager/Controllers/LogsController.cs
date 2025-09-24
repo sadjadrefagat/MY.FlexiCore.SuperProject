@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using MY.FlexiCore.Core.Entities;
 using MY.FlexiCore.Infrastructure;
 
-namespace MY.FlexiCore.Api.Controllers
+namespace MY.FlexiCore.Manager.Controllers
 {
 	[ApiController]
 	[Route("api/[controller]")]
@@ -20,26 +20,36 @@ namespace MY.FlexiCore.Api.Controllers
 		public async Task<ActionResult<IEnumerable<ExecutionLog>>> GetAll(
 			[FromQuery] string? entityName,
 			[FromQuery] int? entityId,
-			[FromQuery] string? level)
+			[FromQuery] string? level
+			)
 		{
-			var query = _db.ExecutionLogs.AsQueryable();
+			try
+			{
+				var query = _db.ExecutionLogs.AsQueryable();
 
-			if (!string.IsNullOrWhiteSpace(entityName))
-				query = query.Where(l => l.EntityName == entityName);
+				if (!string.IsNullOrWhiteSpace(entityName))
+					query = query.Where(l => l.EntityName == entityName);
 
-			if (entityId.HasValue)
-				query = query.Where(l => l.EntityId == entityId);
+				if (entityId.HasValue)
+					query = query.Where(l => l.EntityId == entityId);
 
-			if (!string.IsNullOrWhiteSpace(level))
-				query = query.Where(l => l.Level == level);
+				if (!string.IsNullOrWhiteSpace(level))
+					query = query.Where(l => l.Level == level);
 
-			var logs = await query
-				.OrderByDescending(l => l.CreatedAt)
-				.Take(200) // محدود به 200 تا آخرین لاگ
-				.ToListAsync();
+				var logs = await query
+					.OrderByDescending(l => l.CreatedAt)
+					.Take(200)
+					.ToListAsync();
 
-			return Ok(logs);
+				return Ok(logs);
+			}
+			catch (Exception ex)
+			{
+				// نمایش دقیق خطا در خروجی
+				return StatusCode(500, ex.ToString());
+			}
 		}
+
 
 		[HttpGet("{id}")]
 		public async Task<ActionResult<ExecutionLog>> GetById(int id)

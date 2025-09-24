@@ -7,7 +7,7 @@ namespace MY.FlexiCore.Infrastructure
 	{
 		public MyDbContext(DbContextOptions<MyDbContext> options) : base(options) { }
 
-		public DbSet<DynamicEntity> DynamicEntities { get; set; }
+		public DbSet<DynamicMasterEntity> DynamicMasterEntity { get; set; }
 		public DbSet<ExecutionLog> ExecutionLogs { get; set; }
 	}
 }

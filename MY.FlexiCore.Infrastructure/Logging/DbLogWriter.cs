@@ -1,4 +1,7 @@
 ﻿using MY.FlexiCore.Core.Entities;
+using MY.FlexiCore.Infrastructure;
+using System;
+using System.Threading.Tasks;
 
 namespace MY.FlexiCore.Infrastructure.Logging
 {
@@ -11,7 +14,7 @@ namespace MY.FlexiCore.Infrastructure.Logging
 			_db = db;
 		}
 
-		public async Task WriteLogAsync(string entityName, int? entityId, string hookName, string message, string level = "Info")
+		public async Task WriteLogAsync(string entityName, int? entityId, string hookName, string message, string level, DateTime? createdAt = null) // nullable
 		{
 			var log = new ExecutionLog
 			{
@@ -20,11 +23,12 @@ namespace MY.FlexiCore.Infrastructure.Logging
 				HookName = hookName,
 				Message = message,
 				Level = level,
-				CreatedAt = DateTime.UtcNow
+				CreatedAt = createdAt ?? TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.UtcNow, "Asia/Tehran")
 			};
 
 			_db.ExecutionLogs.Add(log);
 			await _db.SaveChangesAsync();
 		}
+
 	}
 }

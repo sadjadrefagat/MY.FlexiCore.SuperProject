@@ -8,7 +8,7 @@ namespace MY.FlexiCore.Manager.Core.Hooks
 	{
 		public Task BeforeSaveAsync(IExecutionContext ctx)
 		{
-			var entity = ctx.CurrentEntity as DynamicEntity;
+			var entity = ctx.CurrentEntity as DynamicMasterEntity;
 			if (entity != null)
 			{
 				ctx.Log($"BeforeSave برای {entity.Title}");
@@ -18,7 +18,7 @@ namespace MY.FlexiCore.Manager.Core.Hooks
 
 		public Task AfterSaveAsync(IExecutionContext ctx)
 		{
-			var entity = ctx.CurrentEntity as DynamicEntity;
+			var entity = ctx.CurrentEntity as DynamicMasterEntity;
 			if (entity != null)
 			{
 				ctx.Log($"AfterSave برای {entity.Title}");

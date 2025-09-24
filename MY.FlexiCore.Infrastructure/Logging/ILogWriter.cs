@@ -2,6 +2,13 @@
 {
 	public interface ILogWriter
 	{
-		Task WriteLogAsync(string entityName, int? entityId, string hookName, string message, string level = "Info");
+		// زمان به صورت Nullable و با مقدار پیش‌فرض
+		Task WriteLogAsync(
+			string entityName,
+			int? entityId,
+			string hookName,
+			string message,
+			string level,
+			DateTime? createdAt = null);
 	}
 }

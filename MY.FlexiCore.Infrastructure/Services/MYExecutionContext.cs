@@ -1,8 +1,7 @@
 ﻿using MY.FlexiCore.Core.Interfaces;
-using MY.FlexiCore.Infrastructure;
 using MY.FlexiCore.Infrastructure.Logging;
 
-namespace MY.FlexiCore.Manager.Infrastructure.Services
+namespace MY.FlexiCore.Infrastructure.Services
 {
 	public class MYExecutionContext : IExecutionContext
 	{
@@ -12,13 +11,15 @@ namespace MY.FlexiCore.Manager.Infrastructure.Services
 		public object CurrentEntity { get; private set; }
 		public string CurrentUser { get; private set; } = "system";
 
-		public MYExecutionContext(MyDbContext db, ILogWriter logWriter, object currentEntity)
+		// --- Constructor: db, entity, logWriter ---
+		public MYExecutionContext(MyDbContext db, object currentEntity, ILogWriter logWriter)
 		{
-			_db = db;
-			_logWriter = logWriter;
-			CurrentEntity = currentEntity;
+			_db = db ?? throw new ArgumentNullException(nameof(db));
+			CurrentEntity = currentEntity ?? throw new ArgumentNullException(nameof(currentEntity));
+			_logWriter = logWriter ?? throw new ArgumentNullException(nameof(logWriter));
 		}
 
+		// --- IExecutionContext members ---
 		public IQueryable<T> Query<T>() where T : class => _db.Set<T>();
 
 		public async Task<T?> FindAsync<T>(int id) where T : class
@@ -37,7 +38,10 @@ namespace MY.FlexiCore.Manager.Infrastructure.Services
 			var entityName = CurrentEntity.GetType().Name;
 			var entityIdProp = CurrentEntity.GetType().GetProperty("Id");
 			int? entityId = entityIdProp?.GetValue(CurrentEntity) as int?;
-			_logWriter.WriteLogAsync(entityName, entityId, "Hook", message, level).Wait();
+
+			var tehranTime = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.UtcNow, "Asia/Tehran");
+
+			_logWriter.WriteLogAsync(entityName, entityId, "Hook", message, level, tehranTime).Wait();
 		}
 	}
 }

@@ -2,7 +2,7 @@
 
 namespace MY.FlexiCore.Core.Entities
 {
-	public class DynamicEntity
+	public class BaseDynamicEntity
 	{
 		[Description("شناسه موجودیت")]
 		public int Id { get; set; }
@@ -13,7 +13,10 @@ namespace MY.FlexiCore.Core.Entities
 		[Description("نام سیستمی موجودیت")]
 		public string Name { get; set; } = "";
 
-		[Description("فیلدهای موجودیت")]
-		public List<DynamicField> Fields { get; set; } = new();
+		[Description("دارای ماشین وضعیت")]
+		public bool HasStateMachine { get; set; }
+
+		[Description("حذف منطقی")]
+		public bool HasLogicalDelete { get; set; }
 	}
 }
