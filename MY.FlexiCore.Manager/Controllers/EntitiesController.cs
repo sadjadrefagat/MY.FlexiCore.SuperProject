@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MY.FlexiCore.Core.Entities;
+using MY.FlexiCore.Core.Interfaces;
 using MY.FlexiCore.Infrastructure;
 using MY.FlexiCore.Infrastructure.Logging;
 using MY.FlexiCore.Infrastructure.Services;
@@ -12,13 +13,15 @@ namespace MY.FlexiCore.Manager.Controllers
 	[Route("api/[controller]")]
 	public class EntitiesController : ControllerBase
 	{
-		private readonly MyDbContext _db;
-		private readonly ILogWriter _logWriter;
+		readonly private MyDbContext _db;
+		readonly private ILogWriter _logWriter;
+		readonly private IDatabaseEngine _dbEngine;
 
-		public EntitiesController(MyDbContext db, ILogWriter logWriter)
+		public EntitiesController(MyDbContext db, ILogWriter logWriter, IDatabaseEngine dbEngine)
 		{
 			_db = db;
 			_logWriter = logWriter;
+			_dbEngine = dbEngine;
 		}
 
 		[HttpGet]
@@ -101,19 +104,28 @@ namespace MY.FlexiCore.Manager.Controllers
 		public async Task<ActionResult> Publish(int id)
 		{
 			var entity = await _db.DynamicMasterEntity
+				.Include(e => e.HeaderFields)
 				.Include(e => e.FooterFields)
+
+				.Include(e => e.Details)
+				.ThenInclude(d => d.Fields)
+
+				.Include(e => e.Details)
+				.ThenInclude(d => d.Items)
+				.ThenInclude(i => i.Fields)
+
 				.FirstOrDefaultAsync(e => e.Id == id);
 
-			if (entity == null) return NotFound();
+			if (entity == null)
+				return NotFound();
 
-			var ctx = new MYExecutionContext(_db, entity, _logWriter); // ✅ نسخه جدید
-
+			var ctx = new MYExecutionContext(_db, entity, _logWriter);
 			ctx.Log($"موجودیت '{entity.Title}' منتشر شد.", "Info");
-
 
 			entity.IsPublished = true;
 
-			//TODO:Create schema in database
+			var sql = _dbEngine.GetCreateTableQuery(entity);
+			await _db.Database.ExecuteSqlRawAsync(sql);
 
 			await _db.SaveChangesAsync();
 

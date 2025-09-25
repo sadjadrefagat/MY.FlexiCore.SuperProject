@@ -1,4 +1,4 @@
-﻿using MY.FlexiCore.Manager.Core.Enums;
+﻿using MY.FlexiCore.Core.Interfaces;
 using System.ComponentModel;
 
 namespace MY.FlexiCore.Core.Entities
@@ -6,16 +6,16 @@ namespace MY.FlexiCore.Core.Entities
 	public class DynamicField
 	{
 		[Description("شناسه فیلد")]
-		public int Id { get; set; }
+		public long Id { get; set; }
 
 		[Description("عنوان فیلد")]
-		public string Title { get; set; } = "";
+		required public string Title { get; set; }
 
 		[Description("نام سیستمی فیلد")]
-		public string Name { get; set; } = "";
+		required public string Name { get; set; }
 
 		[Description("نوع فیلد")]
-		public FieldTypes DataType { get; set; } = FieldTypes.None;
+		required public IDataType DataType { get; set; }
 
 		[Description("فیلد اجباری")]
 		public bool IsRequired { get; set; } = false;

@@ -2,10 +2,10 @@
 
 namespace MY.FlexiCore.Core.Entities
 {
-	public class BaseDynamicEntity
+	abstract public class BaseDynamicEntity
 	{
 		[Description("شناسه موجودیت")]
-		public int Id { get; set; }
+		public long Id { get; set; }
 
 		[Description("عنوان موجودیت")]
 		public string Title { get; set; } = "";

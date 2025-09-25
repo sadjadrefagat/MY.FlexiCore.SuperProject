@@ -5,9 +5,9 @@ namespace MY.FlexiCore.Core.Entities
 	public class DynamicDetailEntity : BaseDynamicEntity
 	{
 		[Description("فیلدهای موجودیت")]
-		public List<DynamicField> Fields { get; set; } = new();
+		required public IEnumerable<DynamicField> Fields { get; set; }
 
 		[Description("اقلام")]
-		public List<DynamicDetailItemEntity> Items { get; set; } = new();
+		required public IEnumerable<DynamicDetailItemEntity> Items { get; set; }
 	}
 }

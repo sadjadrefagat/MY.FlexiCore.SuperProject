@@ -1,4 +1,4 @@
-﻿namespace MY.FlexiCore.Manager.Core.Enums
+﻿namespace MY.FlexiCore.Core.Enums
 {
 	public enum FieldTypes
 	{

@@ -5,13 +5,13 @@ namespace MY.FlexiCore.Core.Entities
 	public class DynamicMasterEntity : BaseDynamicEntity
 	{
 		[Description("فیلدهای موجودیت در بخش هدر")]
-		public List<DynamicField> HeaderFields { get; set; } = new();
+		required public IEnumerable<DynamicField> HeaderFields { get; set; }
 
 		[Description("فیلدهای موجودیت در بخش فوتر")]
-		public List<DynamicField> FooterFields { get; set; } = new();
+		required public IEnumerable<DynamicField> FooterFields { get; set; }
 
 		[Description("اقلام/Detail")]
-		public List<DynamicDetailEntity> Details { get; set; } = new();
+		required public IEnumerable<DynamicDetailEntity> Details { get; set; }
 
 		[Description("منتشر شده")]
 		public bool IsPublished { get; set; } = false;
