@@ -1,8 +1,7 @@
-﻿using MY.FlexiCore.Core.Interfaces;
-using MY.FlexiCore.Infrastructure;
-using System.Reflection;
+﻿using Microsoft.Extensions.Configuration;
+using MY.FlexiCore.Core.Interfaces;
 
-namespace MY.FlexiCore.Utilities
+namespace MY.FlexiCore.Infrastructure
 {
 	static public class DatabaseEngineFactory
 	{

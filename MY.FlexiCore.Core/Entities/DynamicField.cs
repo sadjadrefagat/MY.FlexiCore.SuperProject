@@ -1,5 +1,4 @@
-﻿using MY.FlexiCore.Core.Interfaces;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 
 namespace MY.FlexiCore.Core.Entities
 {
@@ -15,7 +14,7 @@ namespace MY.FlexiCore.Core.Entities
 		required public string Name { get; set; }
 
 		[Description("نوع فیلد")]
-		required public IDataType DataType { get; set; }
+		required public BaseDataType DataType { get; set; }
 
 		[Description("فیلد اجباری")]
 		public bool IsRequired { get; set; } = false;

@@ -8,7 +8,7 @@ namespace MY.FlexiCore.Core.Interfaces
 		string ConnectionString { get; }
 
 		string GetFieldType<T>(T type)
-			where T : IDataType;
+			where T : BaseDataType;
 
 		string GetCreateTableQuery<T>(T entity)
 			where T : DynamicMasterEntity;

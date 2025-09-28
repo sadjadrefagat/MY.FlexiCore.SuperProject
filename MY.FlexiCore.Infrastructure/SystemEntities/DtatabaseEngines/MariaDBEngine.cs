@@ -92,7 +92,7 @@ namespace MY.FlexiCore.Infrastructure.SystemEntities.DtatabaseEngines
 		}
 
 		public string GetFieldType<T>(T type)
-			where T : IDataType
+			where T : BaseDataType
 		{
 			switch (type.FieldType)
 			{

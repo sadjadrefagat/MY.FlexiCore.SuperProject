@@ -1,13 +1,16 @@
-﻿using MY.FlexiCore.Core.Interfaces;
-
-namespace MY.FlexiCore.Core.Entities.FieldTypes
+﻿namespace MY.FlexiCore.Core.Entities.FieldTypes
 {
-	sealed public class StringFieldType : IDataType
+	sealed public class StringFieldType : BaseDataType
 	{
-		public string Title => "متن";
+		public StringFieldType()
+		{
+			FieldType = Enums.FieldTypes.String;
+		}
 
-		public int Length => 255;
+		override public string Title => "متن";
 
-		public Enums.FieldTypes FieldType => Enums.FieldTypes.String;
+		override public int Length => 255;
+
+		override public Enums.FieldTypes FieldType { get; }
 	}
 }
